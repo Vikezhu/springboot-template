@@ -1,0 +1,1 @@
+java -jar swagger-codegen-cli.jar generate -l spring -c swagger_cfg.json -i swagger.json -o C:\¹¤×÷CMIT\Code\LocalCode\ums

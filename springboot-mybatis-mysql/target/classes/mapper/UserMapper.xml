@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vike.server.ums.dao.UserDao">
+    <resultMap id="CoreResultMap" type="com.vike.server.ums.model.User">
+        <result column="user_id" property="userId"/>
+        <result column="username" property="name"/>
+        <result column="code" property="code"/>
+        <result column="phone" property="phone"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMap" type="com.vike.server.ums.model.UserDetails">
+        <result column="user_id" property="userId"/>
+        <result column="username" property="name"/>
+        <result column="age" property="age"/>
+        <result column="code" property="code"/>
+        <result column="phone" property="phone"/>
+        <result column="apartment" property="apartment"/>
+        <result column="biz_line" property="bizLine"/>
+        <result column="email" property="email"/>
+        <result column="entry_time" property="entryTime"/>
+        <result column="status" property="status"/>
+    </resultMap>
+
+    <sql id="Core_Column_List">
+        user_id, username, code, phone
+    </sql>
+    <sql id="Base_Column_List">
+        user_id, username, age, code, phone, apartment, biz_line, email, entry_time, status
+    </sql>
+
+    <select id="getUser" parameterType="map" resultMap="CoreResultMap">
+        select
+        <include refid="Core_Column_List"/>
+        from ums_user
+        <where>
+            <if test="searchByAny">
+                <if test="userId!=null">user_id = #{userId}</if>
+                <if test="name!=null">or username = #{name}</if>
+                <if test="code!=null">or code = #{code}</if>
+                <if test="phone!=null">or phone = #{phone}</if>
+            </if>
+            <if test="!searchByAny or searchByAny==null">
+                <if test="search">
+                    <!--使用下述方法通用性更好，适用于Oracle、Mysql；使用CONCAT更加简洁，但只适用于Mysql
+                    <if test="userId!=null"><bind name="userId" value="'%' + userId + '%'"/>user_id like #{userId}</if>-->
+                    <if test="userId!=null">user_id like CONCAT('%',#{userId},'%')</if>
+                    <if test="name!=null">and username like CONCAT('%',#{name},'%')</if>
+                    <if test="code!=null">and code like CONCAT('%',#{code},'%')</if>
+                    <if test="phone!=null">and phone like CONCAT('%',#{phone},'%')</if>
+                </if>
+                <if test="search==null or !search">
+                    <if test="userId!=null">user_id = #{userId}</if>
+                    <if test="name!=null">and username = #{name}</if>
+                    <if test="code!=null">and code = #{code}</if>
+                    <if test="phone!=null">and phone = #{phone}</if>
+                </if>
+            </if>
+        </where>
+        <if test="sortfield!=null">
+            <choose>
+                <when test="sortfield=='userId'.toString()">order by user_id</when>
+                <when test="sortfield=='name'.toString()">order by username</when>
+                <when test="sortfield=='code'.toString()">order by code</when>
+                <when test="sortfield=='phone'.toString()">order by phone</when>
+            </choose>
+        </if>
+        <if test="sorttype!=null">
+            <choose>
+                <when test="sorttype=='DESC'.toString()">DESC</when>
+                <when test="sorttype=='ASC'.toString()">ASC</when>
+            </choose>
+        </if>
+        <if test="start!=null and limit!=null">
+            limit #{start},#{limit}
+        </if>
+    </select>
+
+    <select id="getUserDetails" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from ums_user
+        where user_id = #{userId}
+    </select>
+
+    <insert id="addUser" parameterType="com.vike.server.ums.model.UserDetails">
+        insert into ums_user
+        values (#{userId}, #{name}, #{age}, #{code}, #{phone}, #{apartment}, #{bizLine}, #{email}, #{entryTime}, #{status})
+    </insert>
+
+    <update id="updateUser" parameterType="com.vike.server.ums.model.UserDetails">
+        update ums_user
+        set username=#{name},age=#{age},code=#{code},phone=#{phone},apartment=#{apartment},biz_line=#{bizLine},email=#{email},entry_time=#{entryTime},status=#{status}
+        where user_id=#{userId}
+    </update>
+
+    <delete id="deleteUser" parameterType="java.lang.String">
+        delete from ums_user where username=#{name}
+    </delete>
+</mapper>

@@ -1,0 +1,373 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is a sample User Manage server.  You can find out more about     Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).",
+    "version": "1.0.0",
+    "title": "User Manager【用户管理】",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "email": "apiteam@swagger.io"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host": "www.vikezhu.com",
+  "basePath": "/ums/api/v1",
+  "tags": [
+    {
+      "name": "user",
+      "description": "用户信息的操作接口"
+    }
+  ],
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "paths": {
+    "/user": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "新增用户",
+        "description": "",
+        "operationId": "addUser",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "定义一个新的指标",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserDetails"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "创建成功",
+            "schema": {
+              "type": "object",
+              "items": {
+                "$ref": "#/definitions/ApiResult"
+              }
+            }
+          },
+          "405": {
+            "description": "Invalid input,输入不合法"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "user"
+        ],
+        "summary": "更新用户信息",
+        "description": "",
+        "operationId": "updateUser",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "修改指标定义中的信息",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserDetails"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "修改成功",
+            "schema": {
+              "type": "object",
+              "items": {
+                "$ref": "#/definitions/ApiResult"
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found,未找到该资源"
+          },
+          "405": {
+            "description": "Invalid input,输入不合法"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "查询用户信息",
+        "description": "根据用户提交的参数获取用户信息",
+        "operationId": "getUser",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "countOutput",
+            "in": "query",
+            "type": "boolean",
+            "description": "返回结果中的记录数而不是实际数据。默认值：false",
+            "default": false
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "description": "返回从第start个位置起始的记录",
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "限制返回的记录数。",
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "key",
+            "in": "query",
+            "description": "输入查询条件的字段名，多个字段用逗号隔开。",
+            "type": "string"
+          },
+          {
+            "name": "value",
+            "in": "query",
+            "description": "输入查询条件的字段值，多个值用逗号隔开。",
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "为true则根据字段值做模糊查询，类似LIKE %值%；默认为false。",
+            "type": "boolean",
+            "default": false
+          },
+          {
+            "name": "searchByAny",
+            "in": "query",
+            "description": "如果设置为true返回符合filter或search参数中给出的任何条件而不是所有条件的结果。默认值：false。",
+            "type": "boolean",
+            "default": false
+          },
+          {
+            "name": "sortfield",
+            "in": "query",
+            "description": "按给定字段对结果进行排序。",
+            "type": "string"
+          },
+          {
+            "name": "sorttype",
+            "in": "query",
+            "description": "排序方式。可能的值有：ASC- 升序;DESC- 下降。",
+            "type": "string"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "只返回指定的字段，多个字段用户号隔开。",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功",
+            "schema": {
+              "type": "object",
+              "items": {
+                "$ref": "#/definitions/ApiResult"
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found,未找到该资源"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "user"
+        ],
+        "summary": "根据指定参数删除用户信息",
+        "description": "",
+        "operationId": "deleteUser",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+		  {
+            "name": "name",
+            "in": "query",
+            "description": "根据用户名批量删除,多个id用逗号隔开",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "删除成功",
+            "schema": {
+              "type": "object",
+              "items": {
+                "$ref": "#/definitions/ApiResult"
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found,未找到该资源"
+          }
+        }
+      }
+    },
+    "/user/{userId}": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "查询用户信息",
+        "description": "根据用户提交的参数获取指标定义信息",
+        "operationId": "getUserDetails",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "用户id",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功",
+            "schema": {
+              "type": "object",
+              "items": {
+                "$ref": "#/definitions/ApiResult"
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found,未找到该资源"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "用户ID"
+        },
+        "name": {
+          "type": "string",
+          "description": "用户名"
+        },
+        "code": {
+          "type": "string",
+          "description": "工号"
+        },
+        "phone": {
+          "type": "string",
+          "description": "电话"
+        }
+      }
+    },
+    "UserDetails": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "用户ID"
+        },
+        "name": {
+          "type": "string",
+          "description": "用户名"
+        },
+        "age": {
+          "type": "integer",
+          "format": "int32",
+          "description": "年龄"
+        },
+        "code": {
+          "type": "string",
+          "description": "工号"
+        },
+        "phone": {
+          "type": "string",
+          "description": "电话"
+        },
+        "apartment": {
+          "type": "string",
+          "description": "部门"
+        },
+        "bizLine": {
+          "type": "string",
+          "description": "业务线"
+        },
+        "email": {
+          "type": "string",
+          "description": "邮箱"
+        },
+        "entryTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "入职时间"
+        },
+        "status": {
+          "type": "integer",
+          "description": "状态：1=在岗&2=离职中&2=已离职"
+        }
+      }
+    },
+    "ApiResult": {
+      "type": "object",
+      "description": "API返回结果的通用格式",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "请求的返回码"
+        },
+        "message": {
+          "type": "string",
+          "description": "请求的返回消息"
+        },
+        "count": {
+          "type": "integer",
+          "format": "int32",
+          "description": "返回数据的条数"
+        },
+        "datas": {
+          "type": "object",
+          "description": "返回的数据"
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  }
+}

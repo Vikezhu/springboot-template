@@ -1,0 +1,9 @@
+{
+"groupId":"vike",
+"artifactId":"springboot-mybatis-mysql",
+"modelPackage":"com.vike.server.ums.model",
+"apiPackage":"com.vike.server.ums.api",
+"basePackage":"com.vike.server.ums",
+"configPackage":"com.vike.server.ums.config",
+"java8":"true"
+}
