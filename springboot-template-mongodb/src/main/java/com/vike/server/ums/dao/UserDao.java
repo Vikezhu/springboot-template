@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface UserDao {
     List<UserDetails> getUser(Boolean countOutput, Integer start, Integer limit, String key, String value,
-                       Boolean search, Boolean searchByAny, String sortfield, String sorttype);
+                       Boolean search, Boolean searchByAny, String sortfield, String sorttype, String fields);
 
     UserDetails getUserDetails(String userId);
 
@@ -14,5 +14,7 @@ public interface UserDao {
 
     void updateUser(UserDetails user);
 
-    void deleteUser(String name);
+    void deleteUser(String... name);
+
+    void test();
 }

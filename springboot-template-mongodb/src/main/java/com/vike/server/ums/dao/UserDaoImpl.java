@@ -1,9 +1,12 @@
 package com.vike.server.ums.dao;
 
+import com.alibaba.fastjson.JSONObject;
 import com.vike.server.ums.model.UserDetails;
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -21,8 +24,15 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public List<UserDetails> getUser(Boolean countOutput, Integer start, Integer limit, String key, String value,
-                                     Boolean search, Boolean searchByAny, String sortfield, String sorttype) {
-        Query query = new Query();
+                                     Boolean search, Boolean searchByAny, String sortfield, String sorttype, String fields) {
+        Document fieldsDoc = new Document();
+        if (fields != null) {
+            String[] fieldArray = fields.split(",");
+            for (String field : fieldArray) {
+                fieldsDoc.put(field, true);
+            }
+        }
+        Query query = new BasicQuery(new Document(), fieldsDoc);
         // 查询条件处理
         if (!searchByAny) {
             if (search) {
@@ -116,14 +126,39 @@ public class UserDaoImpl implements UserDao {
                 .set("bizLine", user.getBizLine())
                 .set("email", user.getEmail())
                 .set("entryTime", user.getEntryTime())
-                .set("status", user.getStatus());
+                .set("status", user.getStatus())
+                .set("skill", user.getSkill());
         //更新查询返回结果集的第一条
         template.updateFirst(query, update, UserDetails.class);
     }
 
     @Override
-    public void deleteUser(String name) {
-        Query query = new Query(Criteria.where("name").is(name));
+    public void deleteUser(String... name) {
+        Query query = new Query(Criteria.where("name").in(name));
         template.remove(query, UserDetails.class);
+    }
+
+    @Override
+    public void test() {
+        System.out.println("执行了Dao-test()");
+        // 聚合操作groupBy的两种写法。 第一种未解决排序问题。
+        /*GroupBy groupBy = GroupBy.key("code").initialDocument("{count:0}").reduceFunction("function(doc, out){out.count++}")
+                .finalizeFunction("function(out){return out;}");
+        GroupByResults<UserDetails> res = template.group("ums", groupBy, UserDetails.class);
+        Document obj = res.getRawResults();
+        System.out.println("===" + JSONObject.toJSONString(obj));*/
+
+        /*Aggregation aggregation = Aggregation.newAggregation(Aggregation.group("code")
+                .count().as("count"), Aggregation.sort(Sort.by(Sort.Order.desc("count"))));
+        List<BasicDBObject> result = template.aggregate(aggregation, "ums", BasicDBObject.class).getMappedResults();
+        for (Iterator<BasicDBObject> iterator = result.iterator(); iterator.hasNext();) {
+            System.out.println("===" + JSONObject.toJSONString(iterator.next()));
+        }*/
+
+        Query query = new Query().addCriteria(Criteria.where("skill").is("B").andOperator(Criteria.where("skill").is("A")));
+        List<UserDetails> result = template.find(query, UserDetails.class);
+        for (UserDetails user : result) {
+            System.out.println("===" + JSONObject.toJSONString(user));
+        }
     }
 }

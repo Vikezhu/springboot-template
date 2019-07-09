@@ -110,7 +110,7 @@ public interface UserApi {
             @ApiParam(value = "限制返回的记录数。") @Valid @RequestParam(value = "limit", required = false) Integer limit,
             @ApiParam(value = "输入查询条件的字段名，多个字段用逗号隔开。") @Valid @RequestParam(value = "key", required = false) String key,
             @ApiParam(value = "输入查询条件的字段值，多个值用逗号隔开。") @Valid @RequestParam(value = "value", required = false) String value,
-//            @ApiParam(value = "需要查询的字段集，多个值用逗号隔开。") @Valid @RequestParam(value = "fields", required = false) String fields,
+            @ApiParam(value = "需要查询的字段集，多个值用逗号隔开。") @Valid @RequestParam(value = "fields", required = false) String fields,
             @ApiParam(value = "为true则根据字段值做模糊查询，类似LIKE %值%；默认为false。searchByAny为true时，该配置时效！", defaultValue = "false") @Valid @RequestParam(value = "search", required = false, defaultValue="false") Boolean search,
             @ApiParam(value = "如果设置为true返回符合filter或search参数中给出的任何条件而不是所有条件的结果。默认值：false。", defaultValue = "false") @Valid @RequestParam(value = "searchByAny", required = false, defaultValue="false") Boolean searchByAny,
             @ApiParam(value = "按给定字段对结果进行排序。") @Valid @RequestParam(value = "sortfield", required = false) String sortfield,
