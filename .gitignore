@@ -1,3 +1,12 @@
+#folder
+target
+.idea
+.swagger-codegen
+
+#swagger conf
+*.iml
+.swagger-codegen-ignore
+
 # Compiled class file
 *.class
 
