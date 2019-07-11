@@ -26,10 +26,11 @@ public class UserServiceImpl implements UserService {
     public ApiResult getUser(Boolean countOutput, Integer start, Integer limit, String key, String value,
                              Boolean search, Boolean searchByAny, String sortfield, String sorttype, String fields) {
         List<UserDetails> list = userDao.getUser(countOutput, start, limit, key, value, search, searchByAny, sortfield, sorttype, fields);
+        Integer count = userDao.getUserCount(countOutput, start, limit, key, value, search, searchByAny, sortfield, sorttype, fields);
         if (countOutput) {
-            return ResponseUtil.successWithData(list.size(), null);
+            return ResponseUtil.successWithData(count, null);
         } else {
-            return ResponseUtil.successWithData(list.size(), list);
+            return ResponseUtil.successWithData(count, list);
         }
     }
 
