@@ -34,13 +34,13 @@ public class UserDaoImpl implements UserDao {
         }
         Query query = new BasicQuery(new Document(), fieldsDoc);
         // 查询条件处理
-        if (!searchByAny) {
-            if (search) {
+        if (searchByAny == null || !searchByAny) {
+            if (search == null || !search) {
                 if (key != null && value != null) {
                     String[] keys = key.split(",");
                     String[] values = value.split(",");
-                    for (int i = 0; i < keys.length; i++) {
-                        Criteria criteria = Criteria.where(keys[i]).regex(values[i]);
+                    for (int i = 0; i < values.length; i++) {
+                        Criteria criteria = Criteria.where(keys[i]).is(values[i]);
                         query.addCriteria(criteria);
                     }
                 }
@@ -48,20 +48,20 @@ public class UserDaoImpl implements UserDao {
                 if (key != null && value != null) {
                     String[] keys = key.split(",");
                     String[] values = value.split(",");
-                    for (int i = 0; i < keys.length; i++) {
-                        Criteria criteria = Criteria.where(keys[i]).is(values[i]);
+                    for (int i = 0; i < values.length; i++) {
+                        Criteria criteria = Criteria.where(keys[i]).regex(values[i]);
                         query.addCriteria(criteria);
                     }
                 }
             }
         } else {
-            if (search) {
+            if (search == null || !search) {
                 if (key != null && value != null) {
                     String[] keys = key.split(",");
                     String[] values = value.split(",");
                     Criteria[] condition = new Criteria[keys.length];
-                    for (int i = 0; i < keys.length; i++) {
-                        condition[i] = Criteria.where(keys[i]).regex(values[i]);
+                    for (int i = 0; i < values.length; i++) {
+                        condition[i] = Criteria.where(keys[i]).is(values[i]);
                     }
                     Criteria criteria = new Criteria();
                     criteria.orOperator(condition);
@@ -72,8 +72,8 @@ public class UserDaoImpl implements UserDao {
                     String[] keys = key.split(",");
                     String[] values = value.split(",");
                     Criteria[] condition = new Criteria[keys.length];
-                    for (int i = 0; i < keys.length; i++) {
-                        condition[i] = Criteria.where(keys[i]).is(values[i]);
+                    for (int i = 0; i < values.length; i++) {
+                        condition[i] = Criteria.where(keys[i]).regex(values[i]);
                     }
                     Criteria criteria = new Criteria();
                     criteria.orOperator(condition);
@@ -93,11 +93,86 @@ public class UserDaoImpl implements UserDao {
                     break;
             }
         }
+        template.count(query, UserDetails.class);
         if (start != null && limit != null) {
             query.skip(start).limit(limit);
         }
         List<UserDetails> resultList = template.find(query, UserDetails.class);
         return resultList;
+    }
+
+    @Override
+    public Integer getUserCount(Boolean countOutput, Integer start, Integer limit, String key, String value,
+                                     Boolean search, Boolean searchByAny, String sortfield, String sorttype, String fields) {
+        Document fieldsDoc = new Document();
+        if (fields != null) {
+            String[] fieldArray = fields.split(",");
+            for (String field : fieldArray) {
+                fieldsDoc.put(field, true);
+            }
+        }
+        Query query = new BasicQuery(new Document(), fieldsDoc);
+        // 查询条件处理
+        if (searchByAny == null || !searchByAny) {
+            if (search == null || !search) {
+                if (key != null && value != null) {
+                    String[] keys = key.split(",");
+                    String[] values = value.split(",");
+                    for (int i = 0; i < values.length; i++) {
+                        Criteria criteria = Criteria.where(keys[i]).is(values[i]);
+                        query.addCriteria(criteria);
+                    }
+                }
+            } else {
+                if (key != null && value != null) {
+                    String[] keys = key.split(",");
+                    String[] values = value.split(",");
+                    for (int i = 0; i < values.length; i++) {
+                        Criteria criteria = Criteria.where(keys[i]).regex(values[i]);
+                        query.addCriteria(criteria);
+                    }
+                }
+            }
+        } else {
+            if (search == null || !search) {
+                if (key != null && value != null) {
+                    String[] keys = key.split(",");
+                    String[] values = value.split(",");
+                    Criteria[] condition = new Criteria[keys.length];
+                    for (int i = 0; i < values.length; i++) {
+                        condition[i] = Criteria.where(keys[i]).is(values[i]);
+                    }
+                    Criteria criteria = new Criteria();
+                    criteria.orOperator(condition);
+                    query.addCriteria(criteria);
+                }
+            } else {
+                if (key != null && value != null) {
+                    String[] keys = key.split(",");
+                    String[] values = value.split(",");
+                    Criteria[] condition = new Criteria[keys.length];
+                    for (int i = 0; i < values.length; i++) {
+                        condition[i] = Criteria.where(keys[i]).regex(values[i]);
+                    }
+                    Criteria criteria = new Criteria();
+                    criteria.orOperator(condition);
+                    query.addCriteria(criteria);
+                }
+            }
+        }
+        if (sortfield != null && sorttype != null) {
+            switch (sorttype) {
+                case "ASC":
+                    query.with(Sort.by(Sort.Order.asc(sortfield)));
+                    break;
+                case "DESC":
+                    query.with(Sort.by(Sort.Order.desc(sortfield)));
+                    break;
+                default:
+                    break;
+            }
+        }
+        return (int)template.count(query, UserDetails.class);
     }
 
     @Override

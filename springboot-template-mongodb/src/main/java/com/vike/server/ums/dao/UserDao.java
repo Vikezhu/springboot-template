@@ -8,6 +8,9 @@ public interface UserDao {
     List<UserDetails> getUser(Boolean countOutput, Integer start, Integer limit, String key, String value,
                        Boolean search, Boolean searchByAny, String sortfield, String sorttype, String fields);
 
+    Integer getUserCount(Boolean countOutput, Integer start, Integer limit, String key, String value,
+                             Boolean search, Boolean searchByAny, String sortfield, String sorttype, String fields);
+
     UserDetails getUserDetails(String userId);
 
     void addUser(UserDetails user);
