@@ -11,7 +11,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <springfox-version>2.7.0</springfox-version>
         <mybatis-spring-boot>1.3.2</mybatis-spring-boot>
-        <mysql-connector>5.1.44</mysql-connector>
+        <mysql-connector>8.0.28</mysql-connector>
     </properties>
     <parent>
         <groupId>org.springframework.boot</groupId>
